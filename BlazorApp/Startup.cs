@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorApp.DataStreaming;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,8 @@ namespace BlazorApp
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            // SERVICE ADDED
+            services.AddSingleton<DEMORealtimeService>();
             
             //SignalR setup
             services.AddResponseCompression(opts =>

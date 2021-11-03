@@ -1,0 +1,22 @@
+<h3>Demo2</h3>
+
+@page "/demo2"
+@using BlazorApp.DataStreaming
+@inherits LayoutComponentBase
+@inject DEMORealtimeService service
+
+<h1>Demo</h1>
+
+<h2> @service.a </h2>
+
+
+@code{
+    DEMORealtimeService realtime = new DEMORealtimeService();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        service.Loop();
+        //realtime.Loop();
+        service.UpdateEvent += async () => await InvokeAsync(() => this.StateHasChanged());
+    }
+}
