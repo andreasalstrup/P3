@@ -10,10 +10,10 @@ namespace BlazorApp.Data
     public static class ConversionDataAssigner
     {
         public static List<ManagerStatusHandler> FinishedManagers { get; private set; }
-        private static ManagerStatusHandler _currentManager;
+        public static ManagerStatusHandler _currentManager;
         private static SqlConnection _connection;
         private static string _connectionString;
-        private static int _managerQueue;
+        public static int _managerQueue;
         private static int _managerId;
 
         private static List<LogData> errorDataStorageList = new ();
@@ -215,41 +215,26 @@ namespace BlazorApp.Data
                 Console.WriteLine("Sending new list");
                 return new List<LogData>();
             }
-
-            List<LogData> list = new List<LogData>();
-
+            
             if (FinishedManagers.Count > 0)
             {
                 foreach (var finishedManager in FinishedManagers)
                 {
                     if (type == "error")
                         ErrorDataStorageList = finishedManager.ErrorHandler.LogDataList;
-                    //ErrorDataStorageList.AddRange(finishedManager.ErrorHandler.LogDataList);
-                    //list.AddRange(finishedManager.ErrorHandler.LogDataList);
                     else
                         ReconDataStorageList = finishedManager.ReconciliationHandler.LogDataList;
-                        //ReconDataStorageList.AddRange(finishedManager.ReconciliationHandler.LogDataList);
-                        //list.AddRange(finishedManager.ReconciliationHandler.LogDataList);
                 }
             }
             
             if (type == "error")
                 ErrorDataStorageList = _currentManager.ErrorHandler.LogDataList;
-                //ErrorDataStorageList.AddRange(_currentManager.ErrorHandler.LogDataList);
-                //list.AddRange(_currentManager.ErrorHandler.LogDataList);
             else
                 ReconDataStorageList = _currentManager.ErrorHandler.LogDataList;
-                //ReconDataStorageList.AddRange(_currentManager.ReconciliationHandler.LogDataList);
-                //list.AddRange(_currentManager.ReconciliationHandler.LogDataList);
-            
+
             Console.WriteLine("Sending list with errors");
 
-            //return await GetDataStorageList(type);
-            
-            if (type == "error")
-                return await Task.FromResult(ErrorDataStorageList);
-            else 
-                return await Task.FromResult(ReconDataStorageList);
+            return await GetDataStorageList(type);
         }
 
         public static async Task<List<LogData>> GetDataStorageList(string type)
