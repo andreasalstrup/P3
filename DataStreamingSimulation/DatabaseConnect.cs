@@ -32,6 +32,7 @@ namespace DataStreamingSimulation
                 {
                     Console.WriteLine(e.Message);
                 }
+                connection.Close();
             }
         }
         
@@ -40,9 +41,8 @@ namespace DataStreamingSimulation
         ///   <para> Format example: 'Server=localhost\\SQLEXPRESS01;Database=ANS_CUSTOM_MVP;
         ///     User ID=sa; Password=Password123;Trusted_Connection=False' </para>
         /// </remarks>
-        public string ReadSetupFile(bool transferData = false)
+        public string ReadSetupFile(string fileName, bool transferData = false)
         {
-            const string fileName = "../../../setup.txt";
             string[] connectionString = new[] {"","" };
             
             using (StreamReader sr = new StreamReader(fileName))
@@ -53,12 +53,6 @@ namespace DataStreamingSimulation
           
             if (transferData) return connectionString[1];
             return connectionString[0];
-        }
-        
-        public void PrintConnection(SqlConnection connection)
-        {
-            Console.WriteLine("State: {0}", connection.State);
-            Console.WriteLine("ConnectionString: {0}", connection.ConnectionString);
         }
     }
 }

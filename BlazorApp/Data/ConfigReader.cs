@@ -2,14 +2,14 @@ using System.IO;
 
 namespace BlazorApp.Data
 {
-    //Class responsible for reading the setup.txt file and returns the connection string.
+    //Class responsible for reading the setup file and returns the connection string.
     public static class ConfigReader
     {
-        public static string ReadSetupFile()
+        //Static method used to read a file using a path as parameter
+        public static string ReadSetupFile(string path)
         {
-            const string fileName = "setup.txt";
             string connectionString;
-            using (StreamReader sr = new StreamReader(fileName))
+            using (StreamReader sr = new StreamReader(path))
             {
                 connectionString = sr.ReadLine();
             }

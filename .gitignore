@@ -357,3 +357,7 @@ MigrationBackup/
 
 # MACOS
 .DS_Store
+
+.idea/
+BlazorApp/setup.txt
+DataStreamingSimulation/setup.txt

@@ -13,16 +13,14 @@ namespace SQLDatabaseRead
         private SqlDependency _dependency;
         private string _queryString;
         public static SqlConnection Connection { get; set; }
-        private IDataHandler _dataHandlerObject;
+        public IDataHandler DataHandlerObject { get;}
         private bool run;
-        private string dataType;
-        public SQLDependencyListener(string queryString, string currentDataQueryString, IDataHandler dataHandlerObject, string type)
+        public SQLDependencyListener(string queryString, string currentDataQueryString, IDataHandler dataHandlerObject)
         {
             _queryString = queryString;
-            _dataHandlerObject = dataHandlerObject;
+            DataHandlerObject = dataHandlerObject;
             run = true;
-            dataType = type;
-            
+
             //Queries the database for data currently in the database
             AddQueryToObject(currentDataQueryString);
         }
@@ -32,6 +30,7 @@ namespace SQLDatabaseRead
         {
             run = false;
             _dependency.OnChange -= SqlDependencyChange;
+            AddQueryToObject(DataHandlerObject.GetNewestDataQueryString());
         }
 
         //Method responsible for listening for changes in the tables.
@@ -70,9 +69,7 @@ namespace SQLDatabaseRead
             }
             else
             {
-                //Console.WriteLine("QUERY STRING LOOKS LIKE THIS: " + _dataObject.GetChangesQueryString());
-                //To minimise network traffic, a separate list containing only the changes is made and send to the client
-                AddQueryToObject(_dataHandlerObject.GetNewestDataQueryString(dataType));
+                AddQueryToObject(DataHandlerObject.GetNewestDataQueryString());
             }
             StartListening();
         }
@@ -85,7 +82,7 @@ namespace SQLDatabaseRead
                 {
                     if (reader.HasRows)
                     {
-                        _dataHandlerObject.AddDataFromSqlReader(reader);
+                        DataHandlerObject.AddDataFromSqlReader(reader);
                     }
                     reader.Close();
                 }

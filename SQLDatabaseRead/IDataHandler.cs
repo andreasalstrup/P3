@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 
 namespace SQLDatabaseRead
@@ -5,6 +6,6 @@ namespace SQLDatabaseRead
     public interface IDataHandler
     {
         void AddDataFromSqlReader(SqlDataReader reader);
-        string GetNewestDataQueryString(string type);
+        string GetNewestDataQueryString();
     }
 }

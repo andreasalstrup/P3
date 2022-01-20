@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using BlazorApp.DataStreaming.Events;
+using BlazorApp.Data.Events;
 using Microsoft.Data.SqlClient;
 using SQLDatabaseRead;
 
@@ -10,9 +10,10 @@ namespace BlazorApp.Data
     {
         public List<HealthData> Cpu { get; private set; }
         public List<HealthData> Memory { get; private set; }
-        public List<HealthData> NewCpu { get; private set; }
-        public List<HealthData> NewMemory { get; private set; }
-        public static DateTime LastRowTimeStamp { get; private set; }
+        private List<HealthData> NewCpu { get; set; }
+        private List<HealthData> NewMemory { get; set; }
+        private static DateTime LastRowTimeStamp { get; set; }
+        
 
         public HealthDataHandler(DateTime managerStartTime)
         {
@@ -34,37 +35,38 @@ namespace BlazorApp.Data
                 {
                     NewCpu.Add(new HealthData(reader));
                 }
-                else
+                else if (reportType.Equals("MEMORY"))
                 {
                     NewMemory.Add(new HealthData(reader));
                 }
 
                 LastRowTimeStamp = (DateTime)reader[2];
             }
-            PrintCPUAndMemory(NewCpu, NewMemory);
             Cpu.AddRange(NewCpu);
             Memory.AddRange(NewMemory);
+            
+            HealthTriggerUpdate(Cpu, Memory);
         }
 
         //Returns a query string with the latest timestamp to ensure only new data is queried.
-        public string GetNewestDataQueryString(string type)
+        public string GetNewestDataQueryString()
         {
             return string.Format($"SELECT REPORT_TYPE, REPORT_NUMERIC_VALUE, LOG_TIME FROM dbo.HEALTH_REPORT " +
                                  "WHERE (REPORT_TYPE = 'CPU' OR REPORT_TYPE = 'MEMORY')" +
                                  $"AND LOG_TIME > '{LastRowTimeStamp.ToString("yyyy-MM-dd HH:mm:ss.fff")}'" +
                                  "ORDER BY LOG_TIME");
         }
-
-        public void PrintCPUAndMemory(List<HealthData> cpu, List<HealthData> memory)
+        
+        //Method used to create new healthdata objects from values.
+        public void AddHealthData(string reportType, long numericValue, DateTime logtime)
         {
-            foreach (var data in cpu)
+            if (reportType == "CPU")
             {
-                Console.WriteLine(data.LogTime + " " + data.ReportType + " " + data.NumericValue);
+                Cpu.Add(new HealthData(reportType, numericValue, logtime));
             }
-            
-            foreach (var data in memory)
+            else
             {
-                Console.WriteLine(data.LogTime + " " + data.ReportType + " " + data.NumericValue);
+                Memory.Add(new HealthData(reportType, numericValue, logtime));
             }
         }
     }

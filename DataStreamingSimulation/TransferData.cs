@@ -10,7 +10,7 @@ namespace DataStreamingSimulation
         {
             DatabaseConnect sqlConnection = new DatabaseConnect();
             
-            using (SqlConnection connection = new SqlConnection(sqlConnection.ReadSetupFile(true)))
+            using (SqlConnection connection = new SqlConnection(sqlConnection.ReadSetupFile(DatabaseStreamer.FilePath,true)))
             {
                 DataTable schemaTable = reader.GetSchemaTable();
                 DataRow row = schemaTable.Rows[0];
@@ -23,9 +23,6 @@ namespace DataStreamingSimulation
                 }
 
                 string queryString = $"INSERT INTO {row["BaseTableName"]} VALUES (" + paramString + ");";
-
-                Console.WriteLine("---- queryString: ---- ");
-                Console.WriteLine(queryString);
                 
                 using (SqlCommand command = new SqlCommand(queryString, connection))
                 {
